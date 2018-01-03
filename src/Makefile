@@ -28,14 +28,14 @@ PLATFORM =
 
 # Architectures Specific Flags
 LINKER_FILE = 
-CPU =  
-ARCH = 
-SPECS = 
+CPU =  cortex-m4
+ARCH = thumb
+SPECS = nosys.specs
 
 # Compiler Flags and Defines
 CC = gcc
-LD = 
-LDFLAGS = 
+LD = arm-none-eabi-ld
+LDFLAGS = -Wl -Map=c1m2.map 
 CFLAGS = -Wall -Werror -g -O0 -std=c99 -I ../include
 CPPFLAGs = 
 
@@ -45,8 +45,9 @@ ifeq ($(PLATFORM),HOST)
 	CC = gcc
 else 
 	CC = gcc-arm-none-eabi
+	SOURCES += interrupts
 	LDFLAGS = -T msp432p401r.lds
-	CFLAGS += -I ../include/ -mcpu=cortex-m4 -mthump
+	CFLAGS += -I ../include/ -mcpu=cortex-m4 -mthump --specs=nosys.specs --mfloat-abi=hard -mfbu=fbv4-sp-d16 -march=armv7e-m
 endif
 
 
@@ -57,7 +58,7 @@ endif
 	$(CC) $^ -o $@ $(CFLAGS) -S
 
 .PHONY all :
-	
+	$(CC) $(CFLAGS)
 .PHONY build :
 	$(CC) $^ -o $@ $(CFLAGS) 
 
