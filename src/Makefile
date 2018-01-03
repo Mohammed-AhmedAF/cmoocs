@@ -27,7 +27,7 @@ include sources.mk
 PLATFORM = 
 
 # Architectures Specific Flags
-LINKER_FILE = 
+LINKER_FILE = msp432p401r.lds 
 CPU =  cortex-m4
 ARCH = thumb
 SPECS = nosys.specs
@@ -47,7 +47,7 @@ else
 	CC = gcc-arm-none-eabi
 	SOURCES += interrupts
 	LDFLAGS = -T msp432p401r.lds
-	CFLAGS += -I ../include/ -mcpu=cortex-m4 -mthump --specs=nosys.specs --mfloat-abi=hard -mfbu=fbv4-sp-d16 -march=armv7e-m
+	CFLAGS += -I ../include/ -mcpu=$(CPU) -mthump --specs=$(SPECS) --mfloat-abi=hard -mfbu=fbv4-sp-d16 -march=armv7e-m
 endif
 
 
@@ -57,10 +57,14 @@ endif
 %.asm : $(SRC)
 	$(CC) $^ -o $@ $(CFLAGS) -S
 
-.PHONY all :
-	$(CC) $(CFLAGS)
-.PHONY build :
-	$(CC) $^ -o $@ $(CFLAGS) 
+.PHONY : compile-all
+compile-all:
+	$(CC) $(SOURCES) -o $(CFLAGS)
+.PHONY: build
+build :
+	$(CC) $^ -o $@ $(CFLAGS) -c
 
-.PHONY clean :
-		rm *.o *.asm *.i *.map *.out
+.PHONY :clean
+clean :
+	rm *.o *.asm *.i *.map *.out
+
